@@ -86,17 +86,13 @@ class DepthPerceptor:
         
         depth_frame = aligned_frames.get_depth_frame()
         color_frame = aligned_frames.get_color_frame()
+
         if not depth_frame or not color_frame:
             raise('Invalid camera config')
 
         # Convert images to numpy arrays
         depth_image = np.asanyarray(depth_frame.get_data())
         color_image = np.asanyarray(color_frame.get_data())
-
-        depth_shape = depth_image.shape # TODO DEBUG
-        color_shape = color_image.shape
-
-        print("shapes: ", depth_shape, color_shape) 
 
         return depth_image, color_image
 
