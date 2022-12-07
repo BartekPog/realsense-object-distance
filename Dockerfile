@@ -50,4 +50,9 @@ ENV PYTHONPATH=$PYTHONPATH:/usr/local/lib/python3.9/site-packages/pyrealsense2
 
 
 
-RUN pip3 install torch torchvision torchaudio --extra-index-url https://download.pytorch.org/whl/cpu
+COPY ./requirements.txt ./requirements.txt
+RUN pip3 install -r requirements.txt
+
+COPY ./source ./source
+
+CMD ["uvicorn", "source.server:app", "--host", "0.0.0.0", "--port", "80"]

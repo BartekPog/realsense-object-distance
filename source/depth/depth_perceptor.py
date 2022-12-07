@@ -1,5 +1,8 @@
+
+import os 
+
 import numpy as np
-import cv2
+# import cv2
 import pyrealsense2 as rs
 
 
@@ -11,7 +14,11 @@ class DepthPerceptor:
     def __init__(self):
         # Init segmentation model
         self.model = instanceSegmentation()
-        self.model.load_model("models/pointrend_resnet50.pkl")
+
+        dir_path = os.path.dirname(os.path.realpath(__file__))
+        model_path = os.path.join(dir_path, "models/pointrend_resnet50.pkl")
+        
+        self.model.load_model(model_path)
 
         # Init image pipeline
 
@@ -111,12 +118,13 @@ class DepthPerceptor:
             mask = segmentation['masks'][:, :, index]
 
             masked_depth = np.multiply(mask, depth_image)
-
             average_depth = np.sum(masked_depth) / np.count_nonzero(masked_depth)
 
             object_distances.append((class_name, average_depth))
 
         print(object_distances)
+        return object_distances
+        
 
 
 if __name__ == "__main__":
