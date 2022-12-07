@@ -7,17 +7,11 @@ app = FastAPI()
 depth_perceptor = DepthPerceptor()
 
 
-@app.get("/health")
+@app.get("/")
 async def root():
-    return {"message": "Hello World"}
+    return {"status": "ok"}
 
 
 @app.get("/depth")
 async def root():
     return depth_perceptor.get_depth()
-
-
-# if __name__ == "__main__":
-#     import uvicorn
-
-#     uvicorn.run(app, host

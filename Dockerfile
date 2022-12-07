@@ -42,6 +42,8 @@ RUN apt install -y libxinerama-dev libxcursor-dev
 ## Install CMake with Python bindings (that's what the -DBUILD flag is for)
 ## see link: https://github.com/IntelRealSense/librealsense/tree/master/wrappers/python#building-from-source
 RUN cmake ../ -DBUILD_PYTHON_BINDINGS:bool=true -DFORCE_RSUSB_BACKEND=ON -DCMAKE_BUILD_TYPE=release -DBUILD_EXAMPLES=true
+
+
 ## Recompile and install librealsense binaries
 ## This is gonna take a while! The -j4 flag means to use 4 cores in parallel
 ## but you can remove it and simply run `sudo make` instead, which will take longer # make uninstall && sudo make clean && 
@@ -51,10 +53,12 @@ RUN make -j4 && make install
 ENV PYTHONPATH=$PYTHONPATH:/usr/local/lib/python3.9/site-packages/pyrealsense2
 
 
-
-COPY ./requirements.txt ./requirements.txt
+# Requirements file does not contain pyrealsense2 -> We have already installed it
+COPY ./requirements.txt ./requirements.txt 
 RUN pip3 install -r requirements.txt
 
 COPY ./source ./source
+
+EXPOSE 80
 
 CMD ["uvicorn", "source.server:app", "--host", "0.0.0.0", "--port", "80"]
