@@ -3,7 +3,6 @@ import os
 
 import numpy as np
 import pyrealsense2 as rs
-import roslibpy
 
 from pixellib.torchbackend.instance import instanceSegmentation
 
@@ -13,16 +12,11 @@ class DepthPerceptor:
     def __init__(self):
         # Init segmentation model
         self.model = instanceSegmentation()
-        self.cameraInfo = rs.camera_info
         dir_path = os.path.dirname(os.path.realpath(__file__))
         model_path = os.path.join(dir_path, "models/pointrend_resnet50.pkl")
         self.model.load_model(model_path)
         
-
-        
-
         # Init image pipeline
-
         # Configure depth and color streams
         self.pipeline = rs.pipeline()
         self.config = rs.config()
@@ -73,8 +67,6 @@ class DepthPerceptor:
 
 
     def __del__(self):
-        self.RosClient.terminate()
-        self.talker.unadvertise()
         self._stop_streaming_pipeline()
 
     def _get_aligned_images(self):
@@ -99,28 +91,30 @@ class DepthPerceptor:
 
         return depth_image, color_image,color_frame
 
-
     def segment_image(self, image):
         segmentation, _ = self.model.segmentFrame(image)
 
         return segmentation
-    def get3d(self,masked_depth,color_frame):
-        
 
+    def get_object_coordinates(self, masked_depth, color_frame):
         intrinsics = color_frame.profile.as_video_stream_profile().intrinsics
-        results =[]
+        results = []
         height, width = masked_depth.shape
+        
         for x in range(height):
             for y in range(width):
                 if masked_depth[x,y]!=0:
                     results.append(rs.rs2_deproject_pixel_to_point(intrinsics, [x, y], masked_depth[x,y]))
-        results =np.array(results).transpose()
+        
+        results = np.array(results).transpose()
+        
         if results.size == 0:
-            return (None,None,None)
+            return (None, None, None)
+            
         return (np.mean(results[0]),np.mean(results[1]),np.mean(results[2]))
 
     def get_depth(self):
-        depth_image, color_image, color_frame = self._get_aligned_images()
+        depth_image, color_image, _  = self._get_aligned_images()
 
         segmentation = self.segment_image(color_image)
 
@@ -131,6 +125,7 @@ class DepthPerceptor:
             masked_depth = np.multiply(mask, depth_image)
             average_depth = np.sum(masked_depth) / np.count_nonzero(masked_depth)
             object_distances.append((class_name, average_depth))
+
         return object_distances
 
     def get_coordinates(self):
@@ -138,16 +133,15 @@ class DepthPerceptor:
 
         segmentation = self.segment_image(color_image)
 
-        object_distances = []
+        object_coordinates = []
 
         for index, class_name in enumerate(segmentation['class_names']):
             mask = segmentation['masks'][:, :, index]
             masked_depth = np.multiply(mask, depth_image)
-            coordinates = self.get3d(masked_depth=masked_depth,color_frame=color_frame)
-            object_distances.append((class_name, coordinates))
+            coordinates = self.get_object_coordinates(masked_depth=masked_depth, color_frame=color_frame)
+            object_coordinates.append((class_name, coordinates))
         
-        print(object_distances)
-        return object_distances
+        return object_coordinates
         
 
 
