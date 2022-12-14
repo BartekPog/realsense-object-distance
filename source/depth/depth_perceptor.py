@@ -2,7 +2,6 @@
 import os 
 
 import numpy as np
-# import cv2
 import pyrealsense2 as rs
 
 
@@ -14,7 +13,7 @@ class DepthPerceptor:
     def __init__(self):
         # Init segmentation model
         self.model = instanceSegmentation()
-
+        self.cameraInfo = rs.camera_info
         dir_path = os.path.dirname(os.path.realpath(__file__))
         model_path = os.path.join(dir_path, "models/pointrend_resnet50.pkl")
         
@@ -94,17 +93,30 @@ class DepthPerceptor:
         depth_image = np.asanyarray(depth_frame.get_data())
         color_image = np.asanyarray(color_frame.get_data())
 
-        return depth_image, color_image
+        return depth_image, color_image,color_frame
 
 
     def segment_image(self, image):
         segmentation, _ = self.model.segmentFrame(image)
 
         return segmentation
+    def get3d(self,masked_depth,color_frame):
+        
 
+        _intrinsics = color_frame.profile.as_video_stream_profile().intrinsics
+        results =[]
+        height, width = masked_depth.shape
+        for x in range(height):
+            for y in range(width):
+                if masked_depth[x,y]!=0:
+                    results.append(rs.rs2_deproject_pixel_to_point(_intrinsics, [x, y], masked_depth[x,y]))
+        results =np.array(results).transpose()
+        if results.size == 0:
+            return (None,None,None)
+        return (np.mean(results[0]),np.mean(results[1]),np.mean(results[2]))
 
     def get_depth(self):
-        depth_image, color_image = self._get_aligned_images()
+        depth_image, color_image, color_frame = self._get_aligned_images()
 
         segmentation = self.segment_image(color_image)
 
@@ -115,9 +127,9 @@ class DepthPerceptor:
 
             masked_depth = np.multiply(mask, depth_image)
             average_depth = np.sum(masked_depth) / np.count_nonzero(masked_depth)
-
-            object_distances.append((class_name, average_depth))
-
+            pointcloud = self.get3d(masked_depth=masked_depth,color_frame=color_frame)
+            object_distances.append((class_name, average_depth,pointcloud))
+        
         print(object_distances)
         return object_distances
         
