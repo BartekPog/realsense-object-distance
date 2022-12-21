@@ -10,4 +10,4 @@ if __name__ == "__main__":
     connector = RosbridgeConnector(host='192.168.0.150')
     
     while connector.is_connected:
-        connector.publish_message(json.dumps(dp.get_coordinates()))
+        connector.publish_message(json.dumps(dp.get_depth()))
