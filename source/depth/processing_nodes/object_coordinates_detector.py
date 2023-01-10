@@ -1,4 +1,6 @@
 import numpy as np
+import pyrealsense2 as rs
+
 
 from .processing_node import ProcessingNode
 
@@ -12,20 +14,20 @@ class ObjectCoordinatesDetector(ProcessingNode):
     def _get_object_coordinates(self, masked_depth, color_frame):
         intrinsics = color_frame.profile.as_video_stream_profile().intrinsics
         results = []
-        height, width = masked_depth.shape
+        width, height = masked_depth.shape
         
-        for x in range(height):
-            for y in range(width):
-                if masked_depth[x,y]!=0:
-                    results.append(rs.rs2_deproject_pixel_to_point(intrinsics, [x, y], masked_depth[x,y]))
-        
+        for h in range(height):
+            for w in range(width):
+                if masked_depth[w,h]!=0:
+                    results.append(rs.rs2_deproject_pixel_to_point(intrinsics, [w, h], masked_depth[w,h]))
+
         results = np.array(results).transpose()
         
         if results.size == 0:
             return (None, None, None)
             
-        return (np.mean(results[0]), np.mean(results[1]), np.mean(results[2]))
-        
+        return (np.median(results[0]),np.median(results[1]),np.median(results[2]))
+
     def get_iteration_results(self, depth_image, color_image, color_frame, segmented_image):
 
         object_coordinates = []
