@@ -5,9 +5,9 @@ from datetime import datetime
 import matplotlib.pyplot as plt 
 
 
-from .depth import DepthCameraClient, ProcessingNode
-from .segmentation import ObjectDetector
-from .rosbridge_json_connector import RosbridgeJSONConnector, RosClientDisconnected
+from depth import DepthCameraClient, ProcessingNode
+from segmentation import ObjectDetector
+from rosbridge_json_connector import RosbridgeJSONConnector, RosClientDisconnected
 
 
 

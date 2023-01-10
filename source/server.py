@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 
-from .depth.depth_perceptor import DepthPerceptor
+from depth.depth_perceptor import DepthPerceptor
 
 app = FastAPI()
 
