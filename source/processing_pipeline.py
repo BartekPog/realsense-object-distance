@@ -50,7 +50,7 @@ class ProcessingPipeline:
         datetime_text = datetime.now().strftime(r'%Y-%m-%d--%H-%M-%S')
         
         file_name = f'segmentation_{datetime_text}.png'
-        image_path = os.path_join(self.segmentation_image_path, file_name)
+        image_path = os.path.join(self.segmentation_image_path, file_name)
 
         plt.imsave(image_path, segmentation_image)
 
