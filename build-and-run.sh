@@ -6,5 +6,5 @@ sudo docker run \
     --privileged \
     -it \
     --rm \
-    -v ${pwd}/segmentation-images:/realsense/librealsense/build/segmentation-images \
+    -v $(pwd)/segmentation-images:/realsense/librealsense/build/segmentation-images \
     realsense-build-depth
