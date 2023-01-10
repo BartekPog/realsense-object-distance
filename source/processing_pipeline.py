@@ -5,8 +5,10 @@ from datetime import datetime
 import matplotlib.pyplot as plt 
 
 
-from depth import DepthCameraClient, ProcessingNode
+from depth import DepthCameraClient
+from processing_nodes import ProcessingNode
 from segmentation import ObjectDetector
+
 from rosbridge_json_connector import RosbridgeJSONConnector, RosClientDisconnected
 
 
@@ -22,6 +24,8 @@ class ProcessingPipeline:
             for node_class in ProcessingNode.__subclasses__()
             if node_class.active
         ]
+
+        print(f"DEBUG subclasses: {ProcessingNode.__subclasses__()}")
         
         self.rosconnector_node_pairs = [
             (RosbridgeJSONConnector(host=host, port=port, topic=node.target_topic), node)
