@@ -61,6 +61,6 @@ COPY ./source ./source
 
 EXPOSE 80
 
-CMD ["python", "source/server.py"]
+CMD ["python", "source/processing_pipeline.py"]
 
 # CMD ["uvicorn", "source.server:app", "--host", "0.0.0.0", "--port", "80"]
