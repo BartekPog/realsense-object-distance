@@ -24,7 +24,7 @@ Depth perception cameras are a necessary asset for building interactive mobile r
 ## Installation
 Clone this repository to the device which runs ROS and has the realsense2 cameras connected
 ```bash
-git clone git@github.com:IntelRealSense/librealsense.git
+git clone git@github.com:BartekPog/realsense-object-distance.git
 ```
 Download the segmentation model using the `source/segmentation/models/get_model.sh` script
 ```bash
