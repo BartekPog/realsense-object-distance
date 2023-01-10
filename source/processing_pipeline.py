@@ -62,7 +62,7 @@ class ProcessingPipeline:
         segmented_image = None
 
         if self.requires_segmentation:
-            segmented_image, segmentation_map = ObjectDetector.segment_image(color_image)
+            segmented_image, segmentation_map = self.object_detector.segment_image(color_image)
 
             if self.segmentation_image_path is not None:
                 self.save_segmentation_map(segmentation_map) 
