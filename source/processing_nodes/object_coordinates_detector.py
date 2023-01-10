@@ -26,7 +26,7 @@ class ObjectCoordinatesDetector(ProcessingNode):
         if results.size == 0:
             return (None, None, None)
             
-        return (np.median(results[0] * 10),np.median(results[1]* 10),np.median(results[2]* 10)) # Milimeters
+        return (np.median(results[0] / 10),np.median(results[1] / 10),np.median(results[2] / 10)) # Milimeters
 
     def get_iteration_results(self, depth_image, color_image, color_frame, segmented_image):
 
