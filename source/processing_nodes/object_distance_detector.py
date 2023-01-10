@@ -13,7 +13,7 @@ class ObjectDistanceDetector(ProcessingNode):
         for index, class_name in enumerate(segmented_image['class_names']):
             mask = segmented_image['masks'][:, :, index]
             masked_depth = np.multiply(mask, depth_image)
-            average_depth = np.sum(masked_depth) / np.count_nonzero(masked_depth)
+            average_depth = np.sum(masked_depth) / np.count_nonzero(masked_depth) * 10 # Milimeters
             object_distances.append((class_name, average_depth))
 
         return object_distances
