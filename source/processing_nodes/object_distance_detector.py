@@ -4,7 +4,7 @@ from .processing_node import ProcessingNode
 
 
 class ObjectDistanceDetector(ProcessingNode):
-    target_topic = "object_coordinates"
+    target_topic = "object_distances"
     requires_segmentation = True
 
     def get_iteration_results(self, depth_image, color_image, color_frame, segmented_image):
