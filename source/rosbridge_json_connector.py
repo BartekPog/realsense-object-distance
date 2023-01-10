@@ -12,12 +12,11 @@ class RosbridgeJSONConnector:
 
         self.client = roslibpy.Ros(host=host, port=port)
         
-        self.client.on_ready(lambda: print('Is ROS connected?', self.client.is_connected))
+        self.client.on_ready(lambda: print(f'ROS connected for {topic}: ', self.client.is_connected))
 
         self.client.run()
         self.talker = roslibpy.Topic(self.client, topic, 'std_msgs/String')
         self.topic = topic
-
         
     def __del__(self):
         self.talker.unadvertise()
